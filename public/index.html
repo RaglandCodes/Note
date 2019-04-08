@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <title>Note | Sign in</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins"
+      rel="stylesheet"
+    />
+    <style>
+      html,
+      body {
+        width: 96%;
+        height: 100%;
+        margin: 0;
+        padding: 0 2%;
+        font-family: "Poppins", sans-serif;
+      }
+      h1 {
+        text-align: center;
+      }
+      h2{
+        font-size: 17px;
+        margin: 8px 0 0 0 ;
+      }
+      input {
+        font-size: 15px;
+        padding: 2px;
+      }
+      #signin-button {
+        display: inline-block;
+        background-color: white;
+        border: 1px solid black;
+        font-size: 15px;
+        padding: 3px;
+      }
+      #btn-new-note{
+        width: 90%;
+        margin: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Note</h1>
+    <h2>Sign in</h2>
+    <input type="text" placeholder="User Name" id="text-field-user-name" />
+    <button id="signin-button">Sign in</button>
+    <h2>Your notes</h2>
+    <button id="btn-new-note">+ New note</button>
+    <h2>Other's notes</h2>
+
+    
+    <script>
+      const btnSingin = document.getElementById("signin-button");
+      const btnNewNow = document.getElementById("btn-new-node")
+      const textFieldUserName = document.getElementById("text-field-user-name");
+
+      btnSingin.addEventListener("click", () => {
+        let userName = textFieldUserName.value;
+        if (userName.length < 1) {
+          alert("Enter a proper username 📛");
+        } else {
+          let xhttp = new XMLHttpRequest();
+          xhttp.open("GET", `http://localhost:2020/usernotes?user=${userName}`, true);
+          xhttp.send();
+        }
+      });
+    </script>
+  </body>
+</html>
