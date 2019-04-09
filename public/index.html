@@ -106,7 +106,8 @@
               divOthersNotes.innerHTML += `
           <div class="note">
             <div class="note-content">${user["content"]}</div>
-            <i class="fas fa-heart" onClick="heartClicked('${user.user}', '${user.content}', '${userName}')"></i>
+            <i class="fas fa-heart" onMouseOut="heartOut(this)" onMouseOver="heartOver(this, '${user.user}', '${user.content}')" onClick="heartClicked('${user.user}', '${user.content}', '${userName}')"></i>
+            <div class="liked-users">Happy, birthday, boy, me, you</div>
           </div>
           `;
             }
@@ -126,6 +127,47 @@
 
       let userName = "";
 
+
+     
+      function heartOver(e, u, c)
+      {
+        
+        e.parentNode.querySelector(".liked-users").style.display="block";
+        let q = `
+        { users(user: "${u}", content:"${c}") {
+    likedBy
+  }}    `
+
+  fetch("/graphql", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          },
+          body: JSON.stringify({
+            query: q
+          })
+        }).then(r => r.json())
+        .then(d =>{
+          console.log(d);
+          
+          if(d.data.users[0].likedBy.length == 0)
+          {
+            e.parentNode.querySelector(".liked-users").innerHTML = "--";
+          }
+          else{
+            e.parentNode.querySelector(".liked-users").innerHTML = d.data.users[0].likedBy.join(", ");
+          }
+          
+          
+        });
+          
+      }
+
+      function heartOut(e)
+      {
+        e.parentNode.querySelector(".liked-users").style.display="none";
+      }
       function heartClicked(likedUserName, likedContent, likedBy){
         console.log(`mutation{
               addLike(user:"${likedUserName}", content:"${likedContent}", likedBy:"${likedBy}")
@@ -149,7 +191,7 @@
 
       btnNewNote.addEventListener("click", () => {
         if (userName == "") {
-          alert("sing in first");
+          alert("sign in first");
         } else {
           divAddNote.style.display = "block";
           btnNewNote.style.display = "none";

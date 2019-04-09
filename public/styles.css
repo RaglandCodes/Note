@@ -33,11 +33,20 @@ html,
       #div-add-note{
           display: none;
           margin-bottom: 6px;
+          
       }
       #btn-new-note, #btn-add-note {
         width: 90%;
         margin: 0 5%;
 
+      }
+      .liked-users{
+        font-size: 10px;
+        background-color: black;
+          color:white;
+          width: 100%;
+          display: none;
+          bottom: 0;
       }
       #btn-add-note{
           

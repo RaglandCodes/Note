@@ -2,12 +2,10 @@
 
 
 ## What's new
-- Can add new notes (GraphQL mutations)
-- Can't 👍 others notes
+- Users can hover over the ♥ multiple times
 
 ## Limitations
-- Likes can only be seen on the database. Not on the front end
-- Same user can like multiple times
+- Same user can like the same note multiple times
 - Can't edit / delete your notes
 
 
