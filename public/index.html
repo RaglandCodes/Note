@@ -58,18 +58,23 @@
       </div>-->
     </div>
     <h2>Other's notes</h2>
-
+    <div id="div-others-notes">
+      </div>
     <script>
       const btnSingin = document.getElementById("signin-button");
       const btnNewNow = document.getElementById("btn-new-node");
       const divYourNotes = document.getElementById("div-your-notes");
+      const divOthersNotes = document.getElementById("div-others-notes");
       const textFieldUserName = document.getElementById("text-field-user-name");
 
       btnSingin.addEventListener("click", () => {
         let userName = textFieldUserName.value;
         if (userName.length < 1) {
           alert("Enter a proper username 📛");
-        } else {
+        } else if(userName == "all"){
+          alert("invalid user name")
+        }
+        else {
           // let xhttp = new XMLHttpRequest();
           // xhttp.open("GET", `http://localhost:2020/usernotes?user=${userName}`, true);
           // xhttp.send();
@@ -81,6 +86,45 @@
             },
             body: JSON.stringify({
               query: `{ users(user:"${userName}") {   	
+                content
+                }
+              }`
+            })
+          })
+            .then(r => r.json())
+            .then(data => {
+              
+              let renderNotes = `
+              <div class="your-note note">
+                <div class="note-content">OK now buy and get this from the shop</div>
+              </div>
+              `;
+              
+              divYourNotes.innerHTML = ""
+              for(const user of data.data.users)
+              {
+                divYourNotes.innerHTML += 
+                `
+              <div class="your-note note">
+                <div class="note-content">${user['content']}</div>
+              </div>
+              `
+              }
+              
+
+            });
+
+
+              // ----- For displaying other's data
+            
+              fetch("/graphql", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json"
+            },
+            body: JSON.stringify({
+              query: `{ users(user:"all") {   	
                 user
                 content
                 }
@@ -95,19 +139,12 @@
                 <div class="note-content">OK now buy and get this from the shop</div>
               </div>
               `;
-              console.log(data.data.users);
-              
-              // renderNotes = data.data.users.map(user => `
-              // <div class="your-note note">
-              //   <div class="note-content">${user['content']}</div>
-              // </div>
-              // `);
-              divYourNotes.innerHTML = ""
+              divOthersNotes.innerHTML = "";
               for(const user of data.data.users)
               {
-                divYourNotes.innerHTML += 
+                divOthersNotes.innerHTML += 
                 `
-              <div class="your-note note">
+              <div class="note">
                 <div class="note-content">${user['content']}</div>
               </div>
               `
@@ -115,7 +152,9 @@
               
 
             });
-        }
+
+            //--------------
+        }   // end of else
       });
     </script>
   </body>

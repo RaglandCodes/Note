@@ -3,12 +3,12 @@
 For now, users can enter their name only. Nothing happends after than
 
 ## What's new
-- See notes based on user name
+- Moved data to a seperate file
 
 ## Limitations
-- Can't see others' notes
+- Can't 👍 others notes
 - Can add new notes
 
 ## Coming next
-- Fix 👆 those limitations
+- Fix ⬆ those limitations
 - GraphQL implementation
