@@ -17,9 +17,9 @@
       h1 {
         text-align: center;
       }
-      h2{
+      h2 {
         font-size: 17px;
-        margin: 8px 0 0 0 ;
+        margin: 8px 0 0 0;
       }
       input {
         font-size: 15px;
@@ -32,25 +32,37 @@
         font-size: 15px;
         padding: 3px;
       }
-      #btn-new-note{
+      #btn-new-note {
         width: 90%;
-        margin: auto;
+        margin: 0 5%;
+      }
+      .note {
+        border: 1px solid gray;
+        font-size: 14px;
+        width: 90%;
+        margin: 3px auto;
+        padding: 3px;
       }
     </style>
   </head>
   <body>
     <h1>Note</h1>
     <h2>Sign in</h2>
-    <input type="text" placeholder="User Name" id="text-field-user-name" />
+    <input type="text" placeholder="User Name" id="text-field-user-name" value="ra" />
     <button id="signin-button">Sign in</button>
     <h2>Your notes</h2>
     <button id="btn-new-note">+ New note</button>
+    <div id="div-your-notes">
+      <!--<div class="your-note note">
+        <div class="note-content">OK now buy and get this from the shop</div>
+      </div>-->
+    </div>
     <h2>Other's notes</h2>
 
-    
     <script>
       const btnSingin = document.getElementById("signin-button");
-      const btnNewNow = document.getElementById("btn-new-node")
+      const btnNewNow = document.getElementById("btn-new-node");
+      const divYourNotes = document.getElementById("div-your-notes");
       const textFieldUserName = document.getElementById("text-field-user-name");
 
       btnSingin.addEventListener("click", () => {
@@ -58,9 +70,51 @@
         if (userName.length < 1) {
           alert("Enter a proper username 📛");
         } else {
-          let xhttp = new XMLHttpRequest();
-          xhttp.open("GET", `http://localhost:2020/usernotes?user=${userName}`, true);
-          xhttp.send();
+          // let xhttp = new XMLHttpRequest();
+          // xhttp.open("GET", `http://localhost:2020/usernotes?user=${userName}`, true);
+          // xhttp.send();
+          fetch("/graphql", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json"
+            },
+            body: JSON.stringify({
+              query: `{ users(user:"${userName}") {   	
+                user
+                content
+                }
+              }`
+            })
+          })
+            .then(r => r.json())
+            .then(data => {
+              console.log("data returned:", data);
+              let renderNotes = `
+              <div class="your-note note">
+                <div class="note-content">OK now buy and get this from the shop</div>
+              </div>
+              `;
+              console.log(data.data.users);
+              
+              // renderNotes = data.data.users.map(user => `
+              // <div class="your-note note">
+              //   <div class="note-content">${user['content']}</div>
+              // </div>
+              // `);
+              divYourNotes.innerHTML = ""
+              for(const user of data.data.users)
+              {
+                divYourNotes.innerHTML += 
+                `
+              <div class="your-note note">
+                <div class="note-content">${user['content']}</div>
+              </div>
+              `
+              }
+              
+
+            });
         }
       });
     </script>
