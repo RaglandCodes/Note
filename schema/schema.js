@@ -1,8 +1,13 @@
-const graphql = require('graphql');
+const graphql = require("graphql");
 const fs = require("fs");
 const path = require("path");
-const { GraphQLObjectType, GraphQLInputObjectType, GraphQLString, GraphQLSchema, GraphQLList } = graphql;
-
+const {
+  GraphQLObjectType,
+  GraphQLInputObjectType,
+  GraphQLString,
+  GraphQLSchema,
+  GraphQLList
+} = graphql;
 
 const userType = new graphql.GraphQLObjectType({
   name: "user",
@@ -19,44 +24,83 @@ const RootQuery = new GraphQLObjectType({
       type: new GraphQLList(userType),
       args: { user: { type: GraphQLString } },
       resolve(parent, args) {
-          
-        let usersList = JSON.parse(fs.readFileSync(path.join(__dirname, "../notes.json")))
-        
-        if(args.user == "all")
-        {
-            return usersList;
+        let usersList = JSON.parse(
+          fs.readFileSync(path.join(__dirname, "../notes.json"))
+        );
+
+        if (args.user == "all") {
+          return usersList;
         }
-        return usersList.filter(u => u['user'] == args.user);
+        return usersList.filter(u => u["user"] == args.user);
       }
     }
   }
 });
 
 const Mutation = new GraphQLObjectType({
-    name: "Mutation",
-    fields: {
-        addNote: {
-            type: userType,
-            args: {
-                user: { type: GraphQLString },
-                content: { type: GraphQLString }
-            },
-            resolve(parent, args){
-                let usersList = JSON.parse(fs.readFileSync(path.join(__dirname, "../notes.json")));
-                //usersList
-                let newNote = {
-                    user: args.user,
-                    content: args.content
-                };
+  name: "Mutation",
+  fields: {
+    addNote: {
+      type: userType,
+      args: {
+        user: { type: GraphQLString },
+        content: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        let usersList = JSON.parse(
+          fs.readFileSync(path.join(__dirname, "../notes.json"))
+        );
+        
+        let newNote = {
+          user: args.user,
+          content: args.content
+        };
 
-                usersList.push(newNote);
-                fs.writeFileSync(path.join(__dirname, "../notes.json"), JSON.stringify(usersList));
-                
-                return(newNote);
-            }
-        },
+        usersList.push(newNote);
+        fs.writeFileSync(
+          path.join(__dirname, "../notes.json"),
+          JSON.stringify(usersList)
+        );
+
+        return newNote;
+      }
+    },
+    addLike: {
+      type: userType,
+      args: {
+        user: { type: GraphQLString },
+        content: { type: GraphQLString },
+        likedBy: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        console.log("in resolve like");
+        console.log(args.user);
+        console.log(args.content);
+        
+        let usersList = JSON.parse(
+          fs.readFileSync(path.join(__dirname, "../notes.json"))
+        );
+          
+
+        let heartIndex = usersList.findIndex(note => 
+          note['user'] == args.user && note['content'] == args.content
+        );
+        console.log(heartIndex);
+        
+        usersList[heartIndex]['likedBy'].push(args.likedBy);
+        console.log(usersList[heartIndex]);
+        
+
+        fs.writeFileSync(
+          path.join(__dirname, "../notes.json"),
+          JSON.stringify(usersList)
+        );
+
+        return newNote;
+      }
     }
-})
+  }
+});
 
 module.exports = new GraphQLSchema({
   query: RootQuery,

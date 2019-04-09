@@ -12,7 +12,7 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="styles.css" type="text/css" />
-    <script src="script.js"></script>
+    
   </head>
   <body>
     <h1>Note</h1>
@@ -106,6 +106,7 @@
               divOthersNotes.innerHTML += `
           <div class="note">
             <div class="note-content">${user["content"]}</div>
+            <i class="fas fa-heart" onClick="heartClicked('${user.user}', '${user.content}', '${userName}')"></i>
           </div>
           `;
             }
@@ -114,6 +115,7 @@
       const btnSingin = document.getElementById("signin-button");
       const btnNewNote = document.getElementById("btn-new-note");
       const btnAddNote = document.getElementById("btn-add-note");
+      
 
       const divAddNote = document.getElementById("div-add-note");
       const divYourNotes = document.getElementById("div-your-notes");
@@ -123,6 +125,27 @@
       const textAreaNewNote = document.getElementById("text-area-new-note");
 
       let userName = "";
+
+      function heartClicked(likedUserName, likedContent, likedBy){
+        console.log(`mutation{
+              addLike(user:"${likedUserName}", content:"${likedContent}", likedBy:"${likedBy}")
+            }`);
+        
+        fetch("/graphql", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          },
+          body: JSON.stringify({
+            query: `mutation{
+              addLike(user:"${likedUserName}", content:"${likedContent}", likedBy:"${likedBy}")
+            {content}}`
+          })
+        }).then(r => {
+          reRenderNotes();
+        });
+      }
 
       btnNewNote.addEventListener("click", () => {
         if (userName == "") {
