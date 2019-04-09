@@ -1,160 +1,172 @@
 <html>
   <head>
-    <title>Note | Sign in</title>
+    <title>Note</title>
     <link
       href="https://fonts.googleapis.com/css?family=Poppins"
       rel="stylesheet"
     />
-    <style>
-      html,
-      body {
-        width: 96%;
-        height: 100%;
-        margin: 0;
-        padding: 0 2%;
-        font-family: "Poppins", sans-serif;
-      }
-      h1 {
-        text-align: center;
-      }
-      h2 {
-        font-size: 17px;
-        margin: 8px 0 0 0;
-      }
-      input {
-        font-size: 15px;
-        padding: 2px;
-      }
-      #signin-button {
-        display: inline-block;
-        background-color: white;
-        border: 1px solid black;
-        font-size: 15px;
-        padding: 3px;
-      }
-      #btn-new-note {
-        width: 90%;
-        margin: 0 5%;
-      }
-      .note {
-        border: 1px solid gray;
-        font-size: 14px;
-        width: 90%;
-        margin: 3px auto;
-        padding: 3px;
-      }
-    </style>
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="styles.css" type="text/css" />
+    <script src="script.js"></script>
   </head>
   <body>
     <h1>Note</h1>
     <h2>Sign in</h2>
-    <input type="text" placeholder="User Name" id="text-field-user-name" value="ra" />
+    <input
+      type="text"
+      placeholder="User Name"
+      id="text-field-user-name"
+      value="ra"
+    />
     <button id="signin-button">Sign in</button>
     <h2>Your notes</h2>
-    <button id="btn-new-note">+ New note</button>
+
+    <div id="div-add-note">
+      <textarea
+        rows="3"
+        id="text-area-new-note"
+        placeholder="New note's contents"
+      ></textarea>
+      <button id="btn-add-note">+ Add note</button>
+    </div>
+    <button id="btn-new-note">New note</button>
+
     <div id="div-your-notes">
       <!--<div class="your-note note">
         <div class="note-content">OK now buy and get this from the shop</div>
       </div>-->
     </div>
     <h2>Other's notes</h2>
-    <div id="div-others-notes">
-      </div>
+    <div id="div-others-notes"></div>
     <script>
+      function reRenderNotes() {
+        textAreaNewNote.value = "";
+        fetch("/graphql", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          },
+          body: JSON.stringify({
+            query: `{ users(user:"${userName}") {   	
+            content
+            }
+          }`
+          })
+        })
+          .then(r => r.json())
+          .then(data => {
+            let renderNotes = `
+          <div class="your-note note">
+            <div class="note-content">OK now buy and get this from the shop</div>
+          </div>
+          `;
+
+            divYourNotes.innerHTML = "";
+            for (const user of data.data.users) {
+              divYourNotes.innerHTML += `
+          <div class="your-note note">
+            <div class="note-content">${user["content"]}</div>
+          </div>
+          `;
+            }
+          });
+
+        // ----- For displaying other's data
+
+        fetch("/graphql", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          },
+          body: JSON.stringify({
+            query: `{ users(user:"all") {   	
+            user
+            content
+            }
+          }`
+          })
+        })
+          .then(r => r.json())
+          .then(data => {
+            console.log("data returned:", data);
+            let renderNotes = `
+          <div class="your-note note">
+            <div class="note-content">OK now buy and get this from the shop</div>
+          </div>
+          `;
+            divOthersNotes.innerHTML = "";
+            for (const user of data.data.users) {
+              divOthersNotes.innerHTML += `
+          <div class="note">
+            <div class="note-content">${user["content"]}</div>
+          </div>
+          `;
+            }
+          });
+      }
       const btnSingin = document.getElementById("signin-button");
-      const btnNewNow = document.getElementById("btn-new-node");
+      const btnNewNote = document.getElementById("btn-new-note");
+      const btnAddNote = document.getElementById("btn-add-note");
+
+      const divAddNote = document.getElementById("div-add-note");
       const divYourNotes = document.getElementById("div-your-notes");
       const divOthersNotes = document.getElementById("div-others-notes");
-      const textFieldUserName = document.getElementById("text-field-user-name");
 
+      const textFieldUserName = document.getElementById("text-field-user-name");
+      const textAreaNewNote = document.getElementById("text-area-new-note");
+
+      let userName = "";
+
+      btnNewNote.addEventListener("click", () => {
+        if (userName == "") {
+          alert("sing in first");
+        } else {
+          divAddNote.style.display = "block";
+          btnNewNote.style.display = "none";
+        }
+      });
+      btnAddNote.addEventListener("click", () => {
+        let newNote = textAreaNewNote.value;
+        divAddNote.style.display = "none";
+        btnNewNote.style.display = "block";
+
+        fetch("/graphql", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          },
+          body: JSON.stringify({
+            query: `mutation{
+              addNote(user:"${userName}", content:"${newNote}"){
+                content
+              }
+            }`
+          })
+        }).then(r => {
+          reRenderNotes();
+        });
+      });
       btnSingin.addEventListener("click", () => {
-        let userName = textFieldUserName.value;
+        userName = textFieldUserName.value;
         if (userName.length < 1) {
           alert("Enter a proper username 📛");
-        } else if(userName == "all"){
-          alert("invalid user name")
-        }
-        else {
+        } else if (userName == "all") {
+          alert("invalid user name");
+        } else {
           // let xhttp = new XMLHttpRequest();
           // xhttp.open("GET", `http://localhost:2020/usernotes?user=${userName}`, true);
           // xhttp.send();
-          fetch("/graphql", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json"
-            },
-            body: JSON.stringify({
-              query: `{ users(user:"${userName}") {   	
-                content
-                }
-              }`
-            })
-          })
-            .then(r => r.json())
-            .then(data => {
-              
-              let renderNotes = `
-              <div class="your-note note">
-                <div class="note-content">OK now buy and get this from the shop</div>
-              </div>
-              `;
-              
-              divYourNotes.innerHTML = ""
-              for(const user of data.data.users)
-              {
-                divYourNotes.innerHTML += 
-                `
-              <div class="your-note note">
-                <div class="note-content">${user['content']}</div>
-              </div>
-              `
-              }
-              
-
-            });
-
-
-              // ----- For displaying other's data
-            
-              fetch("/graphql", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json"
-            },
-            body: JSON.stringify({
-              query: `{ users(user:"all") {   	
-                user
-                content
-                }
-              }`
-            })
-          })
-            .then(r => r.json())
-            .then(data => {
-              console.log("data returned:", data);
-              let renderNotes = `
-              <div class="your-note note">
-                <div class="note-content">OK now buy and get this from the shop</div>
-              </div>
-              `;
-              divOthersNotes.innerHTML = "";
-              for(const user of data.data.users)
-              {
-                divOthersNotes.innerHTML += 
-                `
-              <div class="note">
-                <div class="note-content">${user['content']}</div>
-              </div>
-              `
-              }
-              
-
-            });
-
-            //--------------
-        }   // end of else
+          reRenderNotes();
+          //--------------
+        } // end of else
       });
     </script>
   </body>

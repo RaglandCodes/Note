@@ -1,14 +1,13 @@
 # Note
 
-For now, users can enter their name only. Nothing happends after than
 
 ## What's new
-- Moved data to a seperate file
+- Can add new notes (GraphQL mutations)
 
 ## Limitations
 - Can't 👍 others notes
-- Can add new notes
+- Can't edit / delete your notes
+
 
 ## Coming next
 - Fix ⬆ those limitations
-- GraphQL implementation
