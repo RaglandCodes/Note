@@ -12,7 +12,6 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="styles.css" type="text/css" />
-    
   </head>
   <body>
     <h1>Note</h1>
@@ -36,15 +35,13 @@
     </div>
     <button id="btn-new-note">New note</button>
 
-    <div id="div-your-notes">
-      <!--<div class="your-note note">
-        <div class="note-content">OK now buy and get this from the shop</div>
-      </div>-->
-    </div>
+    <div id="div-your-notes"></div>
     <h2>Other's notes</h2>
     <div id="div-others-notes"></div>
+    <br><br><br>
     <script>
       function reRenderNotes() {
+        // Deletes the previous notes and renders them again
         textAreaNewNote.value = "";
         fetch("/graphql", {
           method: "POST",
@@ -79,6 +76,7 @@
 
         // ----- For displaying other's data
 
+        // TODO put all the POST requests in a function
         fetch("/graphql", {
           method: "POST",
           headers: {
@@ -106,8 +104,12 @@
               divOthersNotes.innerHTML += `
           <div class="note">
             <div class="note-content">${user["content"]}</div>
-            <i class="fas fa-heart" onMouseOut="heartOut(this)" onMouseOver="heartOver(this, '${user.user}', '${user.content}')" onClick="heartClicked('${user.user}', '${user.content}', '${userName}')"></i>
-            <div class="liked-users">Happy, birthday, boy, me, you</div>
+            <i class="fas fa-heart" onMouseOut="heartOut(this)" onMouseOver="heartOver(this, '${
+              user.user
+            }', '${user.content}')" onClick="heartClicked('${user.user}', '${
+                user.content
+              }', '${userName}')"></i>
+            <div class="liked-users"></div>
           </div>
           `;
             }
@@ -116,7 +118,6 @@
       const btnSingin = document.getElementById("signin-button");
       const btnNewNote = document.getElementById("btn-new-note");
       const btnAddNote = document.getElementById("btn-add-note");
-      
 
       const divAddNote = document.getElementById("div-add-note");
       const divYourNotes = document.getElementById("div-your-notes");
@@ -127,18 +128,15 @@
 
       let userName = "";
 
-
-     
-      function heartOver(e, u, c)
-      {
-        
-        e.parentNode.querySelector(".liked-users").style.display="block";
+      function heartOver(e, u, c) {
+        // gets triggered when user hovers over a heart
+        e.parentNode.querySelector(".liked-users").style.display = "block";
         let q = `
         { users(user: "${u}", content:"${c}") {
-    likedBy
-  }}    `
+          likedBy
+            }}    `;
 
-  fetch("/graphql", {
+        fetch("/graphql", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -147,32 +145,32 @@
           body: JSON.stringify({
             query: q
           })
-        }).then(r => r.json())
-        .then(d =>{
-          console.log(d);
-          
-          if(d.data.users[0].likedBy.length == 0)
-          {
-            e.parentNode.querySelector(".liked-users").innerHTML = "--";
-          }
-          else{
-            e.parentNode.querySelector(".liked-users").innerHTML = d.data.users[0].likedBy.join(", ");
-          }
-          
-          
-        });
-          
+        })
+          .then(r => r.json())
+          .then(d => {
+            console.log(d);
+
+            if (d.data.users[0].likedBy.length == 0) {
+              e.parentNode.querySelector(".liked-users").innerHTML = "--";
+            } else {
+              e.parentNode.querySelector(
+                ".liked-users"
+              ).innerHTML = d.data.users[0].likedBy.join(", ");
+            }
+          });
       }
 
-      function heartOut(e)
-      {
-        e.parentNode.querySelector(".liked-users").style.display="none";
+      function heartOut(e) {
+        //gets triggered when the user stops hovering over a heart
+        
+        e.parentNode.querySelector(".liked-users").style.display = "none";
       }
-      function heartClicked(likedUserName, likedContent, likedBy){
+
+      function heartClicked(likedUserName, likedContent, likedBy) {
         console.log(`mutation{
               addLike(user:"${likedUserName}", content:"${likedContent}", likedBy:"${likedBy}")
             }`);
-        
+
         fetch("/graphql", {
           method: "POST",
           headers: {
@@ -219,6 +217,7 @@
           reRenderNotes();
         });
       });
+
       btnSingin.addEventListener("click", () => {
         userName = textFieldUserName.value;
         if (userName.length < 1) {
@@ -226,9 +225,6 @@
         } else if (userName == "all") {
           alert("invalid user name");
         } else {
-          // let xhttp = new XMLHttpRequest();
-          // xhttp.open("GET", `http://localhost:2020/usernotes?user=${userName}`, true);
-          // xhttp.send();
           reRenderNotes();
           //--------------
         } // end of else

@@ -47,26 +47,7 @@ const RootQuery = new GraphQLObjectType({
         }
       }
     }
-    // ,
-    // hearts: {
-    //   type: new GraphQLList(Gr),
-    //   args: {
-    //     user: { type: GraphQLString },
-    //     content: { type: GraphQLString }
-    //     //likedBy: { type: GraphQLList(GraphQLString) }
-    //   },
-    //   resolve(parent, args) {
-    //     let usersList = JSON.parse(
-    //       fs.readFileSync(path.join(__dirname, "../notes.json"))
-    //     );
-
-    //     let noteIndex = usersList.findIndex(note => note['user'] == args['user'] && note['content'] == args['content']);
-    //     console.log(usersList[noteIndex]['likedBy']);
-
-    //     return usersList[noteIndex]['likedBy'];
-
-    //   }
-    // }
+    
   }
 });
 
@@ -86,7 +67,8 @@ const Mutation = new GraphQLObjectType({
 
         let newNote = {
           user: args.user,
-          content: args.content
+          content: args.content,
+          likedBy: [],
         };
 
         usersList.push(newNote);
@@ -106,9 +88,7 @@ const Mutation = new GraphQLObjectType({
         likedBy: { type: GraphQLString }
       },
       resolve(parent, args) {
-        console.log("in resolve like");
-        console.log(args.user);
-        console.log(args.content);
+        
 
         let usersList = JSON.parse(
           fs.readFileSync(path.join(__dirname, "../notes.json"))
@@ -117,16 +97,26 @@ const Mutation = new GraphQLObjectType({
         let heartIndex = usersList.findIndex(
           note => note["user"] == args.user && note["content"] == args.content
         );
-        console.log(heartIndex);
+        
+        console.log("in resolve like");
+        console.log(args.likedBy);
+        console.log(args.content);
 
-        usersList[heartIndex]["likedBy"].push(args.likedBy);
-        console.log(usersList[heartIndex]);
-
-        fs.writeFileSync(
-          path.join(__dirname, "../notes.json"),
-          JSON.stringify(usersList)
-        );
-
+        if(usersList[heartIndex]["likedBy"].indexOf(args.likedBy) == -1)
+        {
+          console.log("liking");
+          
+          usersList[heartIndex]["likedBy"].push(args.likedBy);
+          fs.writeFileSync(
+            path.join(__dirname, "../notes.json"),
+            JSON.stringify(usersList)
+          );
+        }
+        else{
+          console.log("multiple entries detected");
+          
+        }
+        
         return newNote;
       }
     }

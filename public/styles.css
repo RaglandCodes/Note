@@ -1,60 +1,75 @@
 html,
-      body {
-        width: 96%;
-        height: 100%;
-        margin: 0;
-        padding: 0 2%;
-        font-family: "Poppins", sans-serif;
-      }
-      h1 {
-        text-align: center;
-      }
-      h2 {
-        font-size: 22px;
-        border-top: 1px solid #E0E0E0;
-        margin: 18px 0 0 0;
-      }
-      input {
-        font-size: 15px;
-        padding: 2px;
-      }
-      textarea{
-          width: 90%;
-          margin: 3px 5%;
-          
-      }
-      #signin-button {
-        display: inline-block;
-        background-color: white;
-        border: 1px solid black;
-        font-size: 15px;
-        padding: 3px;
-      }
-      #div-add-note{
-          display: none;
-          margin-bottom: 6px;
-          
-      }
-      #btn-new-note, #btn-add-note {
-        width: 90%;
-        margin: 0 5%;
+body {
+  width: 96%;
+  height: 100%;
+  margin: 0;
+  padding: 0 2%;
+  font-family: "Poppins", sans-serif;
+}
+h1 {
+  text-align: center;
+}
+h2 {
+  font-size: 22px;
+  border-top: 1px solid #e0e0e0;
+  margin: 18px 0 0 0;
+}
+input {
+  font-size: 15px;
+  padding: 4px;
+  border: 1px solid #9e9e9e;
+  border-radius: 15px 0 0 15px;
+}
+textarea {
+  width: 90%;
+  margin: 3px 5%;
+}
+button {
+  background-color: white;
+  font-size: 15px;
+  border: 1px solid black;
+}
+button:hover{
+  color: #ffffff;
+  background-color: #3E2723;
+}
+#signin-button {
+  display: inline-block;
 
-      }
-      .liked-users{
-        font-size: 10px;
-        background-color: black;
-          color:white;
-          width: 100%;
-          display: none;
-          bottom: 0;
-      }
-      #btn-add-note{
-          
-      }
-      .note {
-        border: 1px solid gray;
-        font-size: 14px;
-        width: 90%;
-        margin: 3px auto;
-        padding: 3px;
-      }
+  border-radius: 0 15px 15px 0;
+
+  padding: 3px 7px 3px 3px;
+}
+#div-add-note {
+  display: none;
+  margin-bottom: 6px;
+}
+.fa-heart {
+  padding: 3px;
+}
+#btn-new-note,
+#btn-add-note {
+  width: 90%;
+  margin: 0 5%;
+  padding: 5px;
+  border-radius: 15px;
+}
+.liked-users {
+  font-size: 10px;
+  background-color: #3E2723;
+  color: white;
+  width: 100%;
+  display: none;
+  bottom: 0;
+}
+#btn-add-note {
+
+}
+.note {
+  
+  background-color: #EFEBE9;
+  font-size: 14px;
+  width: 90%;
+  margin: 3px auto;
+  padding: 3px;
+}

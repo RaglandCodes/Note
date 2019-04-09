@@ -3,11 +3,8 @@
 
 ## What's new
 - Users can hover over the ♥ multiple times
+- One user can only like the note once
 
 ## Limitations
-- Same user can like the same note multiple times
 - Can't edit / delete your notes
-
-
-## Coming next
-- Fix ⬆ those limitations
+- Can't handle double quotes in the notes
