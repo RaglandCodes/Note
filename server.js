@@ -9,7 +9,11 @@ const schema = require("./schema/schema");
 const app = express();
 app.use(express.static("public"));
 
+
+//https://www.facebook.com/ProgrammersCreateLife/photos/basw.AbpEEfgkMmf02Qyk-nVpHIFditE0YVl6nnRz7W124wDwGDWuIZuyHfn3F_-bwfLxfcGpmdDDlPpJ8bzfZSR7154DFJ_Bn1iRKOegoRFQZDTn6S211n5Uh_7e_8AVKPN7Yc511_VM_js99e3vuAluK6SwQW6MMXL_zz5uqOiRyTh8HOql7npTlz7cmfyJc3qgDd8.2088123737903160.498327137309289.771203349732462.253553345094093.10206127101079054.985151625011324.1552191721707632.1527331094166068.516739705422192/2088123737903160
+
 app.use(function(req, res, next) {
+	
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
